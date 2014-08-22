@@ -1,0 +1,71 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title>Tic Tac Toe</title>
+	</head>
+	<body>
+		<canvas id="game" width="300" height="300"></canvas>	
+	</body>
+	<script src="game.js"></script>
+	<script src="drawer.js"></script>
+	<script>
+		
+		function drawGame(context, markerSize, game) {
+			drawer.clearBoard(context);
+			drawer.drawBoard(context, 300);
+			if(game.state !== GameState.Idle){
+				alert(game.state);
+				game.restart();
+			} else {
+				var board = game.getBoard();
+				for(var r in board) {
+					for(var c in board[r]) {
+						if(board[r][c] === 'X'){
+							drawer.drawX(context, markerSize * 2, { x: c * 100 + 50, y: r * 100 + 50 });
+						}else if(board[r][c] === 'O'){
+							drawer.drawO(context, markerSize, { x: c * 100 + 50, y: r * 100 + 50 });
+						}
+					}
+				}
+			}
+		}
+
+		var canvas = document.getElementById('game');
+		var context = canvas.getContext('2d');
+		var game = new Game();		
+		drawGame(context, 40, game);
+
+		canvas.addEventListener("click", function (e){ 
+			var extractIndex = function(x){
+				if(x <= 100) return 0;
+				if(x <= 200) return 1;
+				if(x <= 300) return 2;
+			}
+
+			var element = canvas;
+		    var offsetX = 0, offsetY = 0
+
+	        if (element.offsetParent) {
+	        	do {
+			        offsetX += element.offsetLeft;
+			        offsetY += element.offsetTop;
+	      		} while ((element = element.offsetParent));
+		    }
+
+		    x = e.pageX - offsetX;
+		    y = e.pageY - offsetY;
+
+	    	var row = extractIndex(y);
+	    	var col = extractIndex(x);
+    		
+    		try {
+    			game.placeMark(row, col);
+    		} catch(e) {
+    			alert(e);
+    		}
+
+			drawGame(context, 40, game);
+		}, false);
+		
+    </script>
+</html>
